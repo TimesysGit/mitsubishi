@@ -36,6 +36,7 @@
 		 * to be added to the gmac1 device tree blob.
 		 */
 		ethernet0 = &gmac1;
+		ethernet1 = &gmac0; 
 	};
 
 	regulator_3_3v: 3-3-v-regulator {
@@ -226,6 +227,21 @@
    };
 		
 };
+&gmac0 {
+	status = "okay";
+	phy-mode = "gmii";
+
+	rxd0-skew-ps = <0>;
+	rxd1-skew-ps = <0>;
+	rxd2-skew-ps = <0>;
+	rxd3-skew-ps = <0>;
+	txen-skew-ps = <0>;
+	txc-skew-ps = <2600>;
+	rxdv-skew-ps = <0>;
+	rxc-skew-ps = <2000>;
+	max-frame-size = <3800>;
+};
+
 
 &gmac1 {
 	status = "okay";

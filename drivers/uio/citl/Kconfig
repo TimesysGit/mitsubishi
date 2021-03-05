@@ -1,0 +1,7 @@
+config UIO_CITL_CONFIG
+	tristate "C intelligent function module UIO configurations"
+	depends on UIO
+	help
+	  Userspace I/O interface for the C intelligent function module..
+
+	  If you compile this as a module, it will be called uio_citl_config.

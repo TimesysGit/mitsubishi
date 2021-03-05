@@ -1,0 +1,350 @@
+/*
+ * Copyright Altera Corporation (C) 2012,2014. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms and conditions of the GNU General Public License,
+ * version 2, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "socfpga_cyclone5.dtsi"
+
+/ {
+	model = "Altera SOCFPGA Cyclone V SoC Development Kit";
+	compatible = "altr,socfpga-cyclone5-socdk", "altr,socfpga-cyclone5", "altr,socfpga";
+
+	chosen {
+		bootargs = "earlyprintk";
+		stdout-path = "serial0:115200n8";
+	};
+
+	memory {
+		name = "memory";
+		device_type = "memory";
+		reg = <0x0 0x40000000>; /* 1GB */
+	};
+
+	aliases {
+		/* this allow the ethaddr uboot environmnet variable contents
+		 * to be added to the gmac1 device tree blob.
+		 */
+		ethernet0 = &gmac1;
+	};
+
+	regulator_3_3v: 3-3-v-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "3.3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+
+	fpga_bridge2: fpga-bridge@ff600000 {
+			compatible = "altr,socfpga-fpga2hps-bridge";
+			reg = <0xff600000 0x100000>;
+			resets = <&rst FPGA2HPS_RESET>;
+			reset-names = "fpga2hps";
+			clocks = <&l4_main_clk>;
+		};
+
+		fpga_bridge3: fpga2sdram-bridge {
+			compatible = "altr,socfpga-fpga2sdram-bridge";
+		};
+
+		fpga_mgr: fpga-mgr@ff706000 {
+			compatible = "altr,socfpga-fpga-mgr";
+			reg = <0xff706000 0x1000
+			       0xffb90000 0x20>;
+			interrupts = <0 175 4>;
+		};
+	flash@c0000000 {
+			compatible = "cfi-flash";
+			reg = <0xc0000000 0x4000000>;
+			bank-width = <2>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			partition@400000 {
+				label = "rootfs";
+				reg = <0x400000 0x3C00000>;
+			};
+	};
+
+   	sdramedac {
+   		status = "disabled";
+   	};
+   
+		
+		
+			partition@nand-boot {
+				/* 8MB for raw data. */
+				label = "NAND Flash Boot Area 8MB";
+				reg = <0x0 0x800000>;
+			};
+			partition@nand-rootfs {
+				/* 128MB jffs2 root filesystem. */
+				label = "NAND Flash jffs2 Root Filesystem 128MB";
+				reg = <0x800000 0x8000000>;
+			};
+			partition@nand-128 {
+				label = "NAND Flash 128 MB";
+				reg = <0x8800000 0x8000000>;
+			};
+			partition@nand-64 {
+				label = "NAND Flash 64 MB";
+				reg = <0x10800000 0x4000000>;
+			};
+			partition@nand-32 {
+				label = "NAND Flash 32 MB";
+				reg = <0x14800000 0x2000000>;
+			};
+			partition@nand-16 {
+				label = "NAND Flash 16 MB";
+				reg = <0x16800000 0x1000000>;
+			};
+			
+			
+			HWDIEccL2BWRInt@FF200000 {
+      compatible = "generic-uio";
+      interrupts = < 0 35 1 >;
+      interrupt-parent = <&intc>;
+   };
+
+      HWDIEccL2CrctInt@FF200001 {
+      compatible = "generic-uio";
+      interrupts = < 0 36 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+      HWDIEccL2ErrInt@FF200002 {
+      compatible = "generic-uio";
+      interrupts = < 0 37 1 >;
+      interrupt-parent = <&intc>;
+   };
+
+      HWDIEccDdrErrInt@FF200003 {
+      compatible = "generic-uio";
+      interrupts = < 0 39 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   HWDIErrInt@FF200004 {
+      compatible = "generic-uio";
+      interrupts = < 0 40 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   RISWTgrKey1Int@FF200005 {
+      compatible = "generic-uio";
+      interrupts = < 0 41 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   
+   RISWTgrKey2Int@FF200006 {
+      compatible = "generic-uio";
+      interrupts = < 0 42 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   
+   RISWPushBtnInt@FF200007 {
+      compatible = "generic-uio";
+      interrupts = < 0 43 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   GAWDUserWdtErrorInt@FF200008 {
+      compatible = "generic-uio";
+      interrupts = < 0 45 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   XPTMTimeoutEventInt@FF200009 {
+      compatible = "generic-uio";
+      interrupts = < 0 55 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   XIMGGlbIntUnmaskInt@FF20000A {
+      compatible = "generic-uio";
+      interrupts = < 0 56 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   XIMGGblAreaInt@FF20000B {
+      compatible = "generic-uio";
+      interrupts = < 0 69 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   XADCTimeSetCompInt@FF20000C {
+      compatible = "generic-uio";
+      interrupts = < 0 70 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   XIMGYInt@FF20000D {
+      compatible = "generic-uio";
+      interrupts = < 0 84 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   UNMGLowInt@FF20000E {
+      compatible = "generic-uio";
+      interrupts = < 0 93 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   UPDMAsynDmaIntInt@FF20000F {
+      compatible = "generic-uio";
+      interrupts = < 0 100 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   XPTM_OSC1Tmr1Int@FF200010 {
+      compatible = "generic-uio";
+      interrupts = < 0 170 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   HWDIEccIRamCrctInt@FF200011 {
+      compatible = "generic-uio";
+      interrupts = < 0 178 1 >;
+      interrupt-parent = <&intc>;
+   };
+   
+   HWDIEccIRamErrInt@FF200012 {
+      compatible = "generic-uio";
+      interrupts = < 0 179 1 >;
+      interrupt-parent = <&intc>;
+   };
+		
+};
+
+&gmac1 {
+	status = "okay";
+	phy-mode = "rgmii";
+
+	rxd0-skew-ps = <0>;
+	rxd1-skew-ps = <0>;
+	rxd2-skew-ps = <0>;
+	rxd3-skew-ps = <0>;
+	txen-skew-ps = <0>;
+	txc-skew-ps = <2600>;
+	rxdv-skew-ps = <0>;
+	rxc-skew-ps = <2000>;
+	max-frame-size = <3800>;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+&mmc0 {
+	cd-gpios = <&portb 18 0>;
+	vmmc-supply = <&regulator_3_3v>;
+	vqmmc-supply = <&regulator_3_3v>;
+	status = "okay";
+	};
+
+&qspi {
+	status = "okay";
+	flash0: n25q00@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "n25q00";
+		reg = <0>;      /* chip select */
+		spi-max-frequency = <100000000>;
+
+		cdns,page-size = <256>;
+		cdns,block-size = <16>;
+		cdns,read-delay = <4>;
+		cdns,tshsl-ns = <50>;
+		cdns,tsd2d-ns = <50>;
+		cdns,tchsh-ns = <4>;
+		cdns,tslch-ns = <4>;
+
+		partition@qspi-boot {
+			/* 8MB for raw data. */
+			label = "Flash 0 Raw Data";
+			reg = <0x0 0x800000>;
+		};
+		partition@qspi-rootfs {
+			/* 120MB for jffs2 data. */
+			label = "Flash 0 jffs2 Filesystem";
+			reg = <0x800000 0x7800000>;
+		};
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	spidev@0 {
+		/* spidev causes a WARN_ON() so spoof with DAC compat */
+		compatible = "rohm,dh2228fv";
+		reg = <0>;	/* chip select */
+		spi-max-frequency = <1000000>;
+		enable-dma = <1>;
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&usb1 {
+	status = "okay";
+};
+
+&base_fpga_region {
+	status = "okay";
+};
+
+&ddr_dqs_clk_gate{
+	status = "disabled";
+};
+
+&ddr_2x_dqs_clk_gate{
+	status = "disabled";
+};
+
+&ddr_dq_clk_gate {
+	status = "disabled";
+};
+
+&h2f_user2_clk{
+	status = "disabled";
+};
+
+&timer3 {
+	status = "disabled";
+};
+/*
+&rst {
+	status = "disabled";
+		};
+
+&sdr {
+	status = "disabled";
+		};
+*/		
+
+&scu {
+	status = "disabled";
+		};
+
+
